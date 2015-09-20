@@ -52,7 +52,7 @@ class AWS_CORE_API Sha256HMAC : public HMAC
 
     private:
 
-        #ifdef _WINDOWS
+        #if defined(_WINDOWS) || defined(__MINGW32__) || defined(__MINGW64__)
             Aws::UniquePtr< WindowsHashImpl > m_windowsImpl;
         #endif
 };

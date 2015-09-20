@@ -54,7 +54,7 @@ public:
         {
             m_data.reset(Aws::NewArray<T>(m_size, ARRAY_ALLOCATION_TAG));
 
-            #ifdef _WIN32
+            #ifdef MSVC
                 std::copy( arrayToCopy, arrayToCopy + arraySize, stdext::checked_array_iterator< T * >( m_data.get(), m_size ) );
             #else
                 std::copy(arrayToCopy, arrayToCopy + arraySize, m_data.get());
@@ -71,7 +71,7 @@ public:
         {
             m_data.reset(Aws::NewArray<T>(m_size, ARRAY_ALLOCATION_TAG));
 
-            #ifdef _WIN32
+            #ifdef MSVC
                 std::copy( other.m_data.get(), other.m_data.get() + other.m_size, stdext::checked_array_iterator< T * >( m_data.get(), m_size ) );
             #else
                 std::copy(other.m_data.get(), other.m_data.get() + other.m_size, m_data.get());
@@ -101,7 +101,7 @@ public:
         {
             m_data.reset(Aws::NewArray<T>(m_size, ARRAY_ALLOCATION_TAG));
 
-            #ifdef _WIN32
+            #ifdef MSVC
                 std::copy( other.m_data.get(), other.m_data.get() + other.m_size, stdext::checked_array_iterator< T * >( m_data.get(), m_size ) );
             #else
                 std::copy(other.m_data.get(), other.m_data.get() + other.m_size, m_data.get());

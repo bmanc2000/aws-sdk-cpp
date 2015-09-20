@@ -55,7 +55,7 @@ WinINetSyncHttpClient::WinINetSyncHttpClient(const ClientConfiguration& config)
     if (isUsingProxy)
     {
         AWS_LOG_INFO(GetLogTag(), "Http Client is using a proxy. Setting up proxy with settings host %s, port %d, username %s.",
-            config.proxyHost, config.proxyPort, config.proxyUserName);
+            config.proxyHost.c_str(), config.proxyPort, config.proxyUserName.c_str());
 
         inetFlags = INTERNET_OPEN_TYPE_PROXY;
         Aws::StringStream ss;
@@ -152,7 +152,7 @@ bool WinINetSyncHttpClient::DoQueryHeaders(void* hHttpRequest, std::shared_ptr<S
     char contentTypeStr[1024];
     dwSize = sizeof(contentTypeStr);
     HttpQueryInfoA(hHttpRequest, HTTP_QUERY_CONTENT_TYPE, &contentTypeStr, &dwSize, 0);
-    if (contentTypeStr[0] != NULL)
+    if (contentTypeStr[0] != char(0))
     {
         response->SetContentType(contentTypeStr);
         AWS_LOGSTREAM_DEBUG(GetLogTag(), "Received content type " << contentTypeStr);

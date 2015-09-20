@@ -30,8 +30,12 @@ SET(PLATFORM_ANDROID 0)
 SET(PLATFORM_APPLE 0)
 SET(GENERATE_VERSION_INFO 0)
 
+message(STATUS "TARGET_ARCH = ${TARGET_ARCH}")
 if("${TARGET_ARCH}" STREQUAL "WINDOWS")
     SET(PLATFORM_WINDOWS 1)
+    if(MINGW)
+        message(STATUS "This will be a mingw build on Windows")
+    endif()
 elseif("${TARGET_ARCH}" STREQUAL "LINUX")
     SET(PLATFORM_LINUX 1)
 elseif("${TARGET_ARCH}" STREQUAL "APPLE")
@@ -53,7 +57,11 @@ else()
 endif()
 
 if(PLATFORM_WINDOWS)
-    message(STATUS "Generating windows build config")
+    if(MINGW)
+        message(STATUS "Generating mingw windows build config")
+    else()
+        message(STATUS "Generating visual studio windows build config")
+    endif()
 elseif(PLATFORM_LINUX)
     message(STATUS "Generating linux build config")
 elseif(PLATFORM_APPLE)
@@ -189,13 +197,17 @@ set(CMAKE_CONFIGURATION_TYPES
 # pass this flag to the jsoncpp amalgamated source
 add_definitions(-DJSON_USE_EXCEPTION=0)
 
-if(NOT PLATFORM_WINDOWS)
+if(MINGW OR NOT PLATFORM_WINDOWS)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
 endif()
 
+if(MINGW)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+endif()
+
 # warning control
-if(PLATFORM_WINDOWS)
+if(PLATFORM_WINDOWS AND NOT MINGW)
     if(MSVC)
         # some of the clients are exceeding the 16-bit code section limit when building x64 debug, so use /bigobj when we build
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
@@ -344,11 +356,13 @@ if(PLATFORM_ANDROID)
 endif()
 
 #release pdbs in windows
-if(PLATFORM_WINDOWS)
+if(PLATFORM_WINDOWS AND NOT MINGW)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
     set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${CMAKE_STATIC_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
 endif()
+
+
 
 # default libraries to link in per-platform
 if(PLATFORM_WINDOWS)

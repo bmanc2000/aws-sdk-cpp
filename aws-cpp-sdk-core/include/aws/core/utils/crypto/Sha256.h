@@ -56,7 +56,7 @@ class AWS_CORE_API Sha256 : public Hash
 
     private:
 
-        #ifdef _WINDOWS
+        #if defined(_WINDOWS) || defined(__MINGW32__) || defined(__MINGW64__)
             Aws::UniquePtr< WindowsHashImpl > m_windowsImpl;
         #endif
 };

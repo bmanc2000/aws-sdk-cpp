@@ -95,7 +95,11 @@ WinHttpSyncHttpClient::WinHttpSyncHttpClient(const ClientConfiguration& config)
     else
     {
         //disable insecure tls protocols, otherwise you might as well turn ssl verification off.
+#ifdef MSVC
         DWORD flags = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+#else
+        DWORD flags = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1;
+#endif
         if (!WinHttpSetOption(GetOpenHandle(), WINHTTP_OPTION_SECURE_PROTOCOLS, &flags, sizeof(flags)))
         {
             AWS_LOGSTREAM_FATAL(GetLogTag(), "Failed setting secure crypto protocols with error code: " << GetLastError());
@@ -173,7 +177,7 @@ bool WinHttpSyncHttpClient::DoQueryHeaders(void* hHttpRequest, std::shared_ptr<S
     wchar_t contentTypeStr[1024];
     dwSize = sizeof(contentTypeStr);
     WinHttpQueryHeaders(hHttpRequest, WINHTTP_QUERY_CONTENT_TYPE, WINHTTP_HEADER_NAME_BY_INDEX, &contentTypeStr, &dwSize, 0);
-    if (contentTypeStr[0] != NULL)
+    if (contentTypeStr[0] != wchar_t(0))
     {
         Aws::String contentStr = StringUtils::FromWString(contentTypeStr);
         response->SetContentType(contentStr);
@@ -194,7 +198,7 @@ bool WinHttpSyncHttpClient::DoQueryHeaders(void* hHttpRequest, std::shared_ptr<S
 
 bool WinHttpSyncHttpClient::DoSendRequest(void* hHttpRequest) const
 {
-    return (WinHttpSendRequest(hHttpRequest, NULL, NULL, 0, 0, 0, NULL) != 0);
+    return (WinHttpSendRequest(hHttpRequest, NULL, 0, 0, 0, 0, DWORD_PTR(0)) != 0);
 }
 
 bool WinHttpSyncHttpClient::DoReadData(void* hHttpRequest, char* body, uint64_t size, uint64_t& read) const
