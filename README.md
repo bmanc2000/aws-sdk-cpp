@@ -1,3 +1,14 @@
+#### Goal
+The goal of this branch is to get it building with MinGW.
+So far I was able to build (but not use) the libraries - only in 64-bit release mode with the libraries built as static libraries.
+The cmake command line 
+```
+cmake -G "MinGW Makefiles" -DMINGW=1 -DSTATIC_LINKING=1 -DCMAKE_BUILD_TYPE=Release
+```
+It's unclear at the moment why I had to set the MINGW flag.
+I'm still working on determining the cause of the undefined references since the linker is finding the necessary libraries - most likely an issue with the declspec(dllimport).
+
+
 # aws-sdk-cpp
 The goal of the Aws Native SDK is to provide a modern C++ ( Version >= C++ 11) interface for Amazon Web Services. We want it to be performant, fully functioning, with low-level and high-level sdks. Yet, we also want to minimize dependencies, and provide platform portability. This includes Windows, OSX, Linux, and Mobile platforms. 
 
