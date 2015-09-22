@@ -28,7 +28,7 @@
 #include <thread>
 #include <fstream>
 
-#if defined(__MINGW32__) or defined(__MINGW64__) or !defined(_WIN32)
+#if !defined(_MSC_VER)
     #include <sys/stat.h>
     #include <sys/types.h>
     #include <errno.h>
@@ -93,7 +93,7 @@
     }
  
 
-#endif // _WIN32
+#endif // _MSC_VER
 
 static const char *AllocationTag = "AWSCredentialsProviderTest";
 
