@@ -26,6 +26,6 @@ endif()
 
 enable_testing()
 add_executable(runInetHttpTest ${AWS_DYNAMO_INTEGRATION_TESTS_SRC})
-target_link_libraries(runInetHttpTest aws-cpp-sdk-dynamodb testing-resources)
+target_link_libraries(runInetHttpTest aws-cpp-sdk-dynamodb testing-resources psapi)
 copyDlls(runInetHttpTest aws-cpp-sdk-core aws-cpp-sdk-dynamodb testing-resources)
 

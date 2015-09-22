@@ -28,10 +28,23 @@
 #include <thread>
 #include <fstream>
 
-#ifndef _WIN32
+#if defined(__MINGW32__) or defined(__MINGW64__) or !defined(_WIN32)
     #include <sys/stat.h>
     #include <sys/types.h>
     #include <errno.h>
+
+    void setenv(const char* name, const char* value, unsigned overwrite)
+    {
+        AWS_UNREFERENCED_PARAM(overwrite);
+        Aws::StringStream ss;
+        ss << name << "=" << value;
+        _putenv(ss.str().c_str());
+    }
+
+    void unsetenv(const char* name)
+    {
+        setenv(name, "", 1);
+    }
 
     Aws::String GetEnv(const char *variableName)
     {
@@ -43,7 +56,6 @@
 
         return "";
     }
-
 #else
     #include <Windows.h>
 
